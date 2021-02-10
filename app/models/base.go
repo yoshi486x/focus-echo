@@ -1,29 +1,33 @@
 package models
 
-import(
-	"log"
-
+import (
 	"github.com/jinzhu/gorm"
-	_ "github.com/mattn/go-sqlite3"
 )
 
+// Ticket is a sample table for benchmarking
 type Ticket struct {
-	ID			uint 	`json:"id" gorm:"primary_key"`
-	Title 		string 	`json:"title"`
-	Description	string 	`json:"description"`
+	ID          int    `json:"id" form:"id" gorm:"primary_key"`
+	Title       string `json:"title" form:"title"`
+	Description string `json:"description" form:"description"`
 }
 
-var DB *gorm.DB
+// InitDb initializes database via gorm
+func InitDb() *gorm.DB {
+	// Openning file
+	db, err := gorm.Open("sqlite3", "./focus_dev.db")
 
-func ConnectDB() {
-	var err error
+	// Display SQL queries
+	db.LogMode(true)
 
-	db, err := gorm.Open("sqlite3", "focus_dev")
+	// Error
 	if err != nil {
-		log.Fatalln(err)
+		panic(err)
+	}
+	// Creating the table
+	if !db.HasTable(&Ticket{}) {
+		db.CreateTable(&Ticket{})
+		db.Set("gorm:table_options", "ENGINE=InnoDB").CreateTable(&Ticket{})
 	}
 
-	db.AutoMigrate(&Ticket{})
-
-	DB = db
+	return db
 }

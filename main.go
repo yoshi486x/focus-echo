@@ -2,19 +2,17 @@ package main
 
 import (
 	"focus/app/views"
-	"focus/app/models"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+
+	_ "github.com/mattn/go-sqlite3"
 )
 
 func main() {
 	// Echo instance
 	e := echo.New()
-
-	// Database
-	models.ConnectDB()
 
 	// Middleware
 	e.Use(middleware.Logger())
@@ -22,10 +20,13 @@ func main() {
 
 	// Routes
 	e.GET("/", hello)
-	e.GET("/tickets", views.FindTickets)	
+	v1 := e.Group("api/v1")
+	{
+		v1.GET("/tickets", views.GetTickets)
+	}
 
 	// Start server
-	e.Logger.Fatal(e.Start(":1323"))
+	e.Logger.Fatal(e.Start(":9091"))
 }
 
 // Handler

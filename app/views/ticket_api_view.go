@@ -9,11 +9,17 @@ import (
 
 type H map[string]interface{}
 
-// FindTickets is ... GET /tickets
-func FindTickets(c echo.Context) error {
-	var tickets []models.Ticket
-	models.DB.Find(&tickets)
+// GetTickets is ...
+func GetTickets(c echo.Context) error {
+	// Connection handling of the database
+	db := models.InitDb()
+	defer db.Close()
 
-	return c.JSON(http.StatusOK, H{"data": tickets})
-	// return c.JSON(http.StatusOK, nil)
+	var tickets []models.Ticket
+	// SELECT * FROM tickets
+	db.Find(&tickets, []int{4, 6})
+
+	// Display JSON result
+	out := H{"tickets": tickets}
+	return c.JSON(http.StatusOK, out)
 }
