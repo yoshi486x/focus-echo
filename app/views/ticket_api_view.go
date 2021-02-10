@@ -13,11 +13,11 @@ type H map[string]interface{}
 func GetTickets(c echo.Context) error {
 	// Connection handling of the database
 	db := models.InitDb()
-	defer db.Close()
 
 	var tickets []models.Ticket
 	// SELECT * FROM tickets
-	db.Find(&tickets, []int{4, 6})
+	// db.Find(&tickets, []int{4, 6})
+	db.Find(&tickets, 1)
 
 	// Display JSON result
 	out := H{"tickets": tickets}
